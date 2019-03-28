@@ -6,6 +6,7 @@ template<typename T>
 class my_queue
 {
 private:
+	//коменты на русском = сломаный гит
 	//элементы очереди  - отдельный класс
 	class Node {
 	public:
