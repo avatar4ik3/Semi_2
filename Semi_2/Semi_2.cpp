@@ -2,22 +2,84 @@
 //
 
 #include "pch.h"
+#include <conio.h>
 #include <iostream>
+#include <sstream>
 #include "my_queue.h"
 #include "my_queue.cpp"
 using namespace std;
 
 int main()
 {
-	my_queue<int> q,p;
-	q.push(1); p.push(3);
-	q.push(5); p.push(7);
-	q.push(9); p.push(11);
-	cout << q << p;
-	my_queue <int> res;
-	sort_a(q,p,res);
-	cout << res;
-
+	my_queue<int> q[2];
+	my_queue<int> res;
+	unsigned ch = 0,current = 0;
+	string menu_actions = "F1 : push elements || F2 : save queue || F3 :load queue || F4 : change queue || DEL :delete queue || ESC : exit \n\n 1 : invert q || 2 : invert a || 3 : sort q || 4 : sort a", err_str = " ", line;
+	while (ch != 0x1B) {
+		system("cls");
+		cout << menu_actions << err_str << "->current queue:" << current + 1<<endl <<"queue 1: "<< q[0]<<endl<<"queue 2: "<<q[1] <<endl <<"res is: " <<res;
+		rewind(stdin);
+		ch = _getch();
+		err_str = "\n";
+		switch (ch)
+		{
+		case 0x3B://f1
+			while (ch != 0x1B) {
+				system("cls");
+				cout << "Enter values fo queue " << current + 1 << endl << "current queue:" << q[current] << err_str << endl << "enter queue:";
+				getline(cin, line);
+				istringstream s_line(line);
+				while (s_line.peek() != '\0') {
+					s_line >> q[current].buff;
+					if (s_line.fail()) {
+						err_str += "input error";
+						ch = 0x1B;
+						break;
+					}
+					else q[current].push(q[current].buff);
+				}
+			}
+			ch = 0;
+			break;
+		case 0x3C://f2
+			cout << "enter name: ";
+			cin >> line;
+			q[current].save(line);
+			break;
+		case 0x3D://f3
+			cout << "enter name: ";
+			cin >> line;
+			q[current].clear();
+			q[current].load(line);
+			if (q[current].load_fail()) {
+				err_str += q[current].get_err();
+			}
+			break;
+		case 0x3E://f4
+			current++;
+			current = current % 2;
+			break;
+		case 83://del
+			q[current].~my_queue();
+			break;
+		case 49://1
+			q[current].invert_q();
+			break;
+		case 50://2
+			q[current].invert_a();
+			break;
+		case 51://3
+			res.~my_queue();
+			sort_q(q[0], q[1], res);
+			break;
+		case 52://4
+			res.~my_queue();
+			sort_a(q[0], q[1], res);
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 // Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
